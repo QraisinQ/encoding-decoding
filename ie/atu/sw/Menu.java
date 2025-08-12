@@ -1,5 +1,6 @@
 package ie.atu.sw;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 /**
@@ -59,9 +60,7 @@ public class Menu {
                     toggleMode();
                     break;
                 case "5":
-                    if (validateFiles()) {
-                        processFile();
-                    }
+                    processFile();
                     break;
                 case "6":
                     Menu.clearScreen();
@@ -114,39 +113,12 @@ public class Menu {
         scanner.nextLine();
     }
 
-    private boolean validateFiles() {
-        if (words == null) {
-            System.out.println("Mapping data not loaded. Please specify a valid mapping file.");
-            return false;
-        }
-        if (inputFilePath == null || inputFilePath.isBlank()) {
-            System.out.println("Input file path not specified.");
-            return false;
-        }
-        if (outputFilePath == null || outputFilePath.isBlank()) {
-            System.out.println("Output file path not specified.");
-            return false;
-        }
-        return true;
-    }
-
-    // private void loadMappingFile() {
-    // try {
-    // MappingLoader loader = new MappingLoader();
-    // loader.loadMapping(mappingFilePath);
-    // words = loader.getWords();
-    // codes = loader.getCodes();
-    // System.out.println("Mapping file loaded successfully. Entries: " +
-    // words.length);
-    // } catch (Exception e) {
-    // System.out.println("Failed to load mapping file: " + e.getMessage());
-    // words = null;
-    // codes = null;
-    // }
-    // }
-
     private void processFile() {
         try {
+            var mappingLoader = new MappingLoader();
+            mappingLoader.loadMapping(mappingFilePath);
+            words = mappingLoader.getWords();
+
             if (isEncodingMode) {
                 Encoder encoder = new Encoder(words);
                 encoder.encodeFile(inputFilePath, outputFilePath);
@@ -154,10 +126,12 @@ public class Menu {
                 Decoder decoder = new Decoder(words);
                 decoder.decodeFile(inputFilePath, outputFilePath);
             }
+
             System.out.println((isEncodingMode ? "Encoding" : "Decoding") + " completed successfully.");
+            System.out.println(Arrays.toString(words));
         } catch (Exception e) {
             System.out.println("Error during processing: " + e.getMessage());
-            e.printStackTrace();
+            words = null;
         }
     }
 }

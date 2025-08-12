@@ -12,21 +12,15 @@ import java.util.Map;
  */
 public class Decoder {
 
-    private Map<Integer, String> codeToWord;
+    private String[] words;
 
-    public Decoder(String[] words, int[] codes) {
-        codeToWord = new HashMap<>();
-        for (int i = 0; i < words.length; i++) {
-            codeToWord.put(codes[i], words[i]);
-        }
+    public Decoder(String[] words) {
+        this.words = words;
     }
 
-    /**
-     * Decodes the numeric code input file and writes original text to output file.
-     */
     public void decodeFile(String inputFilePath, String outputFilePath) throws Exception {
         try (BufferedReader br = new BufferedReader(new FileReader(inputFilePath));
-             BufferedWriter bw = new BufferedWriter(new FileWriter(outputFilePath))) {
+                BufferedWriter bw = new BufferedWriter(new FileWriter(outputFilePath))) {
 
             String line;
             while ((line = br.readLine()) != null) {

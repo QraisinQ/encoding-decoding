@@ -16,10 +16,10 @@ public class Encoder {
 
     private Map<String, Integer> wordToCode;
 
-    public Encoder(String[] words, int[] codes) {
+    public Encoder(String[] words) {
         wordToCode = new HashMap<>();
         for (int i = 0; i < words.length; i++) {
-            wordToCode.put(words[i], codes[i]);
+            wordToCode.put(words[i], 42);
         }
     }
 
@@ -28,7 +28,7 @@ public class Encoder {
      */
     public void encodeFile(String inputFilePath, String outputFilePath) throws Exception {
         try (BufferedReader br = new BufferedReader(new FileReader(inputFilePath));
-             BufferedWriter bw = new BufferedWriter(new FileWriter(outputFilePath))) {
+                BufferedWriter bw = new BufferedWriter(new FileWriter(outputFilePath))) {
 
             String line;
             while ((line = br.readLine()) != null) {
