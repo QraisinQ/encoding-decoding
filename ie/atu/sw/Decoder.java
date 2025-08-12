@@ -1,17 +1,10 @@
 package ie.atu.sw;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Decodes numeric code files back to original text based on mapping arrays.
  */
 public class Decoder {
-
+    private final String SPACES = ", ";
     private String[] words;
 
     public Decoder(String[] words) {
@@ -19,40 +12,44 @@ public class Decoder {
     }
 
     public void decodeFile(String inputFilePath, String outputFilePath) throws Exception {
-        try (BufferedReader br = new BufferedReader(new FileReader(inputFilePath));
-                BufferedWriter bw = new BufferedWriter(new FileWriter(outputFilePath))) {
+        var encodedLines = FileUtility.readFileToArray(inputFilePath);
+        var resultLines = new String[encodedLines.length];
 
-            String line;
-            while ((line = br.readLine()) != null) {
-                String decodedLine = decodeLine(line);
-                bw.write(decodedLine);
-                bw.newLine();
-            }
+        for (var i = 0; i < encodedLines.length; i++) {
+            resultLines[i] = decodeLine(encodedLines[i]);
         }
+
+        FileUtility.writeArrayToFile(outputFilePath, resultLines);
     }
 
-    /**
-     * Decodes a space-separated list of numbers into the original string.
-     */
-    private String decodeLine(String line) {
-        StringBuilder sb = new StringBuilder();
-        String[] parts = line.trim().split("\\s+");
+    private String decodeLine(String line) throws Exception {
 
-        for (String numStr : parts) {
-            try {
-                int code = Integer.parseInt(numStr);
-                String word = codeToWord.get(code);
-                if (word != null) {
-                    sb.append(word);
+        try {
+            if (line.isEmpty())
+                return "";
+
+            var result = "";
+            var codes = line.split(SPACES);
+
+            for (var code : codes) {
+                var codeToInteger = Integer.parseInt(code);
+                var currentWord = words[codeToInteger];
+
+                if (currentWord.startsWith("@@")) {
+                    result += currentWord.substring(2);
                 } else {
-                    sb.append("<?>"); // placeholder for unknown codes
+                    if (result.isEmpty()) {
+                        result += currentWord;
+                    } else {
+                        result += " " + currentWord;
+                    }
                 }
-                sb.append(" ");
-            } catch (NumberFormatException e) {
-                sb.append("<?> ");
             }
+
+            return result;
+        } catch (Exception e) {
+            throw new Exception("Error during Decoding!!!");
         }
 
-        return sb.toString().trim();
     }
 }

@@ -57,18 +57,30 @@ public class Menu {
                     specifyOutputFile();
                     break;
                 case "4":
+                    Menu.clearScreen();
                     toggleMode();
+
+                    System.out.println();
+                    System.out.println("Press Enter to continue...");
+                    scanner.nextLine();
                     break;
                 case "5":
+                    Menu.clearScreen();
                     processFile();
+
+                    System.out.println();
+                    System.out.println("Press Enter to continue...");
+                    scanner.nextLine();
                     break;
                 case "6":
+                    scanner.close();
                     Menu.clearScreen();
                     System.out.println("Exiting application. Goodbye!");
-                    scanner.close();
+
                     return;
                 default:
                     System.out.println("Invalid option. Please select a number from 1 to 6.");
+                    break;
             }
         }
     }
@@ -106,11 +118,7 @@ public class Menu {
     private void toggleMode() {
         isEncodingMode = !isEncodingMode;
 
-        Menu.clearScreen();
         System.out.println("Switched to " + (isEncodingMode ? "Encoding" : "Decoding") + " mode.");
-        System.out.println();
-        System.out.println("Press Enter to continue...");
-        scanner.nextLine();
     }
 
     private void processFile() {
@@ -128,7 +136,6 @@ public class Menu {
             }
 
             System.out.println((isEncodingMode ? "Encoding" : "Decoding") + " completed successfully.");
-            System.out.println(Arrays.toString(words));
         } catch (Exception e) {
             System.out.println("Error during processing: " + e.getMessage());
             words = null;
