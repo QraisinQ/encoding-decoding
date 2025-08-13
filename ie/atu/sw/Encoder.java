@@ -3,6 +3,7 @@ package ie.atu.sw;
 import java.util.Arrays;
 
 public class Encoder {
+    private final String SPACES = ", ";
     private String[][] words;
     private String[][] suffixes;
 
@@ -31,6 +32,24 @@ public class Encoder {
                 wordsCounter += 1;
             }
         }
+
+        var isChanged = true;
+        while (isChanged) {
+            isChanged = false;
+
+            for (var i = 1; i < this.words.length; i++) {
+                if (this.words[i][0].length() > this.words[i - 1][0].length()) {
+                    var temp = this.words[i];
+                    this.words[i] = this.words[i - 1];
+                    this.words[i - 1] = temp;
+
+                    isChanged = true;
+                }
+            }
+        }
+
+        // for (var item : words)
+        // System.out.println(Arrays.toString(item));
     }
 
     public void encodeFile(String inputFilePath, String outputFilePath) throws Exception {
@@ -38,13 +57,83 @@ public class Encoder {
         var resultLines = new String[lines.length];
 
         for (var i = 0; i < lines.length; i++) {
-            resultLines[i] = Arrays.toString(encodeLine(lines[i]));
+            resultLines[i] = encodeLine(lines[i]);
         }
 
         FileUtility.writeArrayToFile(outputFilePath, resultLines);
     }
 
-    private String[] encodeLine(String line) {
-        return new String[] { "42" };
+    private String encodeLine(String line) {
+        if (line.isEmpty()) {
+            return "";
+        }
+
+        var lowerCaseLine = line.toLowerCase();
+        var elements = new String[lowerCaseLine.length()];
+        var currentWord = new StringBuilder();
+        var elementsCounter = 0;
+
+        for (int i = 0; i < lowerCaseLine.length(); i++) {
+            char ch = lowerCaseLine.charAt(i);
+
+            if (Character.isLetterOrDigit(ch)) {
+                currentWord.append(ch);
+            } else {
+                if (currentWord.length() > 0) {
+                    elements[elementsCounter] = currentWord.toString();
+                    currentWord.setLength(0);
+                    elementsCounter += 1;
+                }
+
+                elements[elementsCounter] = String.valueOf(ch);
+                elementsCounter += 1;
+            }
+        }
+
+        if (currentWord.length() > 0) {
+            elements[elementsCounter] = currentWord.toString();
+            elementsCounter += 1;
+        }
+
+        var result = "";
+        for (var i = 0; i < elementsCounter; i++) {
+            var element = elements[i];
+            var codes = encodeElement(element);
+
+            for (var k = 0; k < codes.length; k++) {
+                if (result.isEmpty()) {
+                    result = codes[k];
+                    continue;
+                }
+
+                result += SPACES + codes[k];
+            }
+        }
+
+        return result;
+    }
+
+    private String[] encodeElement(String element) {
+        if (element.equals(" ")) {
+            return new String[0];
+        }
+
+        for (var word : words) {
+            if (element.equals(word[0])) {
+                return new String[] { word[1] };
+            }
+
+            if (element.startsWith(word[0])) {
+                var currentWordSuffix = element.substring(word[0].length());
+
+                for (var suffix : suffixes) {
+                    if (currentWordSuffix.equals(suffix[0])) {
+                        return new String[] { word[1], suffix[1] };
+                    }
+                }
+            }
+        }
+
+        return new String[] { "0" };
     }
 }

@@ -1,6 +1,5 @@
 package ie.atu.sw;
 
-import java.util.Arrays;
 import java.util.Scanner;
 
 /**
@@ -11,7 +10,7 @@ public class Menu {
 
     private Scanner scanner;
     private String mappingFilePath = "./encodings-10000.csv";
-    private String inputFilePath = "./test.txt";
+    private String inputFilePath = "./test2.txt";
     private String outputFilePath = "./out.txt";
     private boolean isEncodingMode = true;
 
@@ -129,7 +128,7 @@ public class Menu {
 
             if (isEncodingMode) {
                 Encoder encoder = new Encoder(words);
-                // encoder.encodeFile(inputFilePath, outputFilePath);
+                encoder.encodeFile(inputFilePath, outputFilePath);
             } else {
                 Decoder decoder = new Decoder(words);
                 decoder.decodeFile(inputFilePath, outputFilePath);
