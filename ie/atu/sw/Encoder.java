@@ -1,73 +1,50 @@
 package ie.atu.sw;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Arrays;
 
-/**
- * Encodes text files to numeric codes based on the mapping arrays.
- */
 public class Encoder {
-
-    private Map<String, Integer> wordToCode;
+    private String[][] words;
+    private String[][] suffixes;
 
     public Encoder(String[] words) {
-        wordToCode = new HashMap<>();
-        for (int i = 0; i < words.length; i++) {
-            wordToCode.put(words[i], 42);
+        var suffixesCounter = 0;
+        for (var word : words) {
+            if (word.startsWith("@@"))
+                suffixesCounter += 1;
         }
-    }
 
-    /**
-     * Encodes the entire input file and writes numeric codes to output file.
-     */
-    public void encodeFile(String inputFilePath, String outputFilePath) throws Exception {
-        try (BufferedReader br = new BufferedReader(new FileReader(inputFilePath));
-                BufferedWriter bw = new BufferedWriter(new FileWriter(outputFilePath))) {
+        var wordsCounter = words.length - suffixesCounter;
 
-            String line;
-            while ((line = br.readLine()) != null) {
-                int[] encodedLine = encodeLine(line);
-                for (int i = 0; i < encodedLine.length; i++) {
-                    bw.write(String.valueOf(encodedLine[i]));
-                    if (i < encodedLine.length - 1) {
-                        bw.write(" ");
-                    }
-                }
-                bw.newLine();
+        this.words = new String[wordsCounter][2];
+        this.suffixes = new String[suffixesCounter][2];
+        wordsCounter = 0;
+        suffixesCounter = 0;
+
+        for (var word : words) {
+            if (word.startsWith("@@")) {
+                this.suffixes[suffixesCounter][0] = word.substring(2);
+                this.suffixes[suffixesCounter][1] = Integer.toString(suffixesCounter + wordsCounter);
+                suffixesCounter += 1;
+            } else {
+                this.words[wordsCounter][0] = word;
+                this.words[wordsCounter][1] = Integer.toString(suffixesCounter + wordsCounter);
+                wordsCounter += 1;
             }
         }
     }
 
-    /**
-     * Encodes a line into codes using word-to-code mapping.
-     */
-    private int[] encodeLine(String line) {
-        // Split into words and punctuation
-        Pattern pattern = Pattern.compile("\\w+|\\p{Punct}");
-        Matcher matcher = pattern.matcher(line);
+    public void encodeFile(String inputFilePath, String outputFilePath) throws Exception {
+        var lines = FileUtility.readFileToArray(inputFilePath);
+        var resultLines = new String[lines.length];
 
-        // Count tokens
-        int count = 0;
-        while (matcher.find()) {
-            count++;
+        for (var i = 0; i < lines.length; i++) {
+            resultLines[i] = Arrays.toString(encodeLine(lines[i]));
         }
 
-        // Encode
-        int[] codesArr = new int[count];
-        matcher.reset();
-        int idx = 0;
-        while (matcher.find()) {
-            String token = matcher.group();
-            Integer code = wordToCode.get(token);
-            codesArr[idx++] = (code != null) ? code : -1; // -1 for unknown token
-        }
+        FileUtility.writeArrayToFile(outputFilePath, resultLines);
+    }
 
-        return codesArr;
+    private String[] encodeLine(String line) {
+        return new String[] { "42" };
     }
 }

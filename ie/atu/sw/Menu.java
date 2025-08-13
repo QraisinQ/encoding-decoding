@@ -129,7 +129,7 @@ public class Menu {
 
             if (isEncodingMode) {
                 Encoder encoder = new Encoder(words);
-                encoder.encodeFile(inputFilePath, outputFilePath);
+                // encoder.encodeFile(inputFilePath, outputFilePath);
             } else {
                 Decoder decoder = new Decoder(words);
                 decoder.decodeFile(inputFilePath, outputFilePath);
