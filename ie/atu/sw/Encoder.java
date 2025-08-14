@@ -1,7 +1,5 @@
 package ie.atu.sw;
 
-import java.util.Arrays;
-
 public class Encoder {
     private final String SPACES = ", ";
     private String[][] words;
@@ -47,9 +45,6 @@ public class Encoder {
                 }
             }
         }
-
-        // for (var item : words)
-        // System.out.println(Arrays.toString(item));
     }
 
     public void encodeFile(String inputFilePath, String outputFilePath) throws Exception {
@@ -58,6 +53,7 @@ public class Encoder {
 
         for (var i = 0; i < lines.length; i++) {
             resultLines[i] = encodeLine(lines[i]);
+            ProgressMeter.printProgress(i + 1, lines.length);
         }
 
         FileUtility.writeArrayToFile(outputFilePath, resultLines);

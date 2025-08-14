@@ -2,19 +2,13 @@ package ie.atu.sw;
 
 import java.util.Scanner;
 
-/**
- * Handles the command-line menu interaction with the user.
- * Gets input for file paths, mode selection, and calls encoding/decoding.
- */
 public class Menu {
-
     private Scanner scanner;
     private String mappingFilePath = "./encodings-10000.csv";
-    private String inputFilePath = "./test2.txt";
+    private String inputFilePath = "./test.txt";
     private String outputFilePath = "./out.txt";
     private boolean isEncodingMode = true;
-
-    private String[] words; // Loaded from MappingLoader
+    private String[] words;
 
     public static void clearScreen() {
         System.out.print("\033[H\033[2J");
@@ -25,14 +19,17 @@ public class Menu {
         scanner = new Scanner(System.in);
     }
 
-    /**
-     * Displays the main menu and processes user choices.
-     */
     public void showMainMenu() {
-        // loadMappingFile();
 
         while (true) {
             Menu.clearScreen();
+            System.out.println(ConsoleColour.YELLOW);
+            System.out.println("************************************************************");
+            System.out.println("*     ATU - Dept. of Computer Science & Applied Physics    *");
+            System.out.println("*                                                          *");
+            System.out.println("*              Encoding Words with Suffixes                *");
+            System.out.println("*                                                          *");
+            System.out.println("************************************************************");
             System.out.println("\n=== Text Encoding Application ===");
             System.out.println("1) Specify Mapping File (current: " + mappingFilePath + ")");
             System.out.println(
@@ -41,6 +38,8 @@ public class Menu {
             System.out.println("4) Switch to " + (isEncodingMode ? "Decoding" : "Encoding") + " Mode");
             System.out.println("5) Start " + (isEncodingMode ? "Encoding" : "Decoding"));
             System.out.println("6) Quit");
+
+            System.out.print(ConsoleColour.BLUE_BOLD);
             System.out.print("Select option [1-6]: ");
 
             String choice = scanner.nextLine();
@@ -126,6 +125,9 @@ public class Menu {
             mappingLoader.loadMapping(mappingFilePath);
             words = mappingLoader.getWords();
 
+            System.out.println("Start " + (isEncodingMode ? "Encoding" : "Decoding") + " process...");
+            System.out.println();
+
             if (isEncodingMode) {
                 Encoder encoder = new Encoder(words);
                 encoder.encodeFile(inputFilePath, outputFilePath);
@@ -134,6 +136,8 @@ public class Menu {
                 decoder.decodeFile(inputFilePath, outputFilePath);
             }
 
+            System.out.println();
+            System.out.println();
             System.out.println((isEncodingMode ? "Encoding" : "Decoding") + " completed successfully.");
         } catch (Exception e) {
             System.out.println("Error during processing: " + e.getMessage());

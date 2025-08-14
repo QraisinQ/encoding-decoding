@@ -1,8 +1,5 @@
 package ie.atu.sw;
 
-/**
- * Decodes numeric code files back to original text based on mapping arrays.
- */
 public class Decoder {
     private final String SPACES = ", ";
     private String[] words;
@@ -17,13 +14,13 @@ public class Decoder {
 
         for (var i = 0; i < encodedLines.length; i++) {
             resultLines[i] = decodeLine(encodedLines[i]);
+            ProgressMeter.printProgress(i + 1, encodedLines.length);
         }
 
         FileUtility.writeArrayToFile(outputFilePath, resultLines);
     }
 
     private String decodeLine(String line) throws Exception {
-
         try {
             if (line.isEmpty())
                 return "";
