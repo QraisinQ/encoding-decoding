@@ -2,23 +2,43 @@ package ie.atu.sw;
 
 import java.util.Scanner;
 
+/**
+ * Menu class
+ * -----------------
+ * Handles user interaction through a text-based menu.
+ * Allows users to configure file paths, switch between encoding/decoding modes,
+ * and start the encoding/decoding process.
+ */
 public class Menu {
     private Scanner scanner;
-    private String mappingFilePath = "./encodings-10000.csv";
-    private String inputFilePath = "./test.txt";
-    private String outputFilePath = "./out.txt";
-    private boolean isEncodingMode = true;
-    private String[] words;
+    private String mappingFilePath = "./encodings-10000.csv"; // Default mapping file
+    private String inputFilePath = "./test.txt"; // Default input file
+    private String outputFilePath = "./out.txt"; // Default output file
+    private boolean isEncodingMode = true; // Starts in encoding mode
+    private String[] words; // Stores loaded mapping words
 
+    /**
+     * Clears the console screen using ANSI escape codes.
+     * Works in most terminals that support ANSI sequences.
+     */
     public static void clearScreen() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
 
+    /**
+     * Constructor.
+     * Initializes the scanner for user input.
+     */
     public Menu() {
         scanner = new Scanner(System.in);
     }
 
+    /**
+     * Displays the main menu in a loop and processes user selections.
+     * User can configure file paths, toggle modes, start encoding/decoding, or
+     * exit.
+     */
     public void showMainMenu() {
 
         while (true) {
@@ -83,6 +103,10 @@ public class Menu {
         }
     }
 
+    /**
+     * Prompts the user to enter a path for the mapping file.
+     * Keeps the default value if input is blank.
+     */
     private void specifyMappingFile() {
         Menu.clearScreen();
         System.out.print("Enter path to mapping CSV file or press Enter for default value: ");
@@ -93,6 +117,10 @@ public class Menu {
         }
     }
 
+    /**
+     * Prompts the user to enter a path for the input text file.
+     * Keeps the default value if input is blank.
+     */
     private void specifyInputFile() {
         Menu.clearScreen();
         System.out.print("Enter path to input text file or press Enter for default value: ");
@@ -103,6 +131,10 @@ public class Menu {
         }
     }
 
+    /**
+     * Prompts the user to enter a path for the output file.
+     * Keeps the default value if input is blank.
+     */
     private void specifyOutputFile() {
         Menu.clearScreen();
         System.out.print("Enter path to output file or press Enter for default value: ");
@@ -113,12 +145,20 @@ public class Menu {
         }
     }
 
+    /**
+     * Toggles between Encoding and Decoding mode.
+     */
     private void toggleMode() {
         isEncodingMode = !isEncodingMode;
 
         System.out.println("Switched to " + (isEncodingMode ? "Encoding" : "Decoding") + " mode.");
     }
 
+    /**
+     * Loads the mapping file and starts encoding or decoding the input file.
+     * Results are written to the output file.
+     * Displays an error message if something goes wrong.
+     */
     private void processFile() {
         try {
             var mappingLoader = new MappingLoader();
